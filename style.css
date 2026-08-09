@@ -220,6 +220,9 @@ body {
 /* Fixed-position runaway state */
 .btn-yes.runaway {
   position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
   z-index: 500;
   transition: top 0.42s cubic-bezier(0.34, 1.7, 0.42, 1), left 0.42s cubic-bezier(0.34, 1.7, 0.42, 1);
 }

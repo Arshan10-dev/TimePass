@@ -144,23 +144,28 @@
   }
 
   function moveYesButton() {
-    const { w, h } = getButtonSize();
-    const margin = 12;
-    const maxLeft = Math.max(margin, window.innerWidth - w - margin);
-    const maxTop = Math.max(margin, window.innerHeight - h - margin);
-
-    const newLeft = margin + Math.random() * (maxLeft - margin);
-    const newTop = margin + Math.random() * (maxTop - margin);
-
     if (!yesBtn.classList.contains("runaway")) {
       // freeze current position first so the transition starts from here
       const rect = yesBtn.getBoundingClientRect();
       yesBtn.style.left = rect.left + "px";
       yesBtn.style.top = rect.top + "px";
+      yesBtn.style.right = "auto";
+      yesBtn.style.bottom = "auto";
       yesBtn.classList.add("runaway");
       // force reflow so the browser registers the starting point
       void yesBtn.offsetWidth;
     }
+
+    const { w, h } = getButtonSize();
+    const margin = 16;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const maxLeft = Math.max(margin, vw - w - margin);
+    const maxTop = Math.max(margin, vh - h - margin);
+
+    const newLeft = Math.min(maxLeft, margin + Math.random() * (maxLeft - margin));
+    const newTop = Math.min(maxTop, margin + Math.random() * (maxTop - margin));
 
     yesBtn.style.left = newLeft + "px";
     yesBtn.style.top = newTop + "px";
