@@ -158,6 +158,14 @@
       yesBtn.style.right = "auto";
       yesBtn.style.bottom = "auto";
       yesBtn.classList.add("runaway");
+
+      // IMPORTANT: .card has a transform-based float animation, and any
+      // transformed ancestor becomes the containing block for position:fixed
+      // children — which breaks our viewport-relative math and lets the
+      // button drift outside the visible window. Move it straight onto
+      // <body> so it's fixed relative to the real viewport, not the card.
+      document.body.appendChild(yesBtn);
+
       // force reflow so the browser registers the starting point before we move it
       void yesBtn.offsetWidth;
     }
@@ -230,6 +238,7 @@
     question.textContent = "😂 Hahahaa... I know!";
     subtext.textContent = "at least you're honest";
     card.classList.add("answered");
+    yesBtn.style.display = "none";
     playLaugh();
     launchConfetti();
   });
