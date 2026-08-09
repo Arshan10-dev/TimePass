@@ -1,520 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Untamed &mdash; A Cinematic Tribute</title>
-  <meta name="description" content="A fan-made cinematic tribute inspired by stardom, grit and the untamed spirit of horses." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EQUUS — The Spirit of the Horse</title>
+<meta name="description" content="A cinematic documentary celebrating the beauty, freedom and power of the horse.">
 
-  <!-- Google Fonts: Cinzel (display), Cormorant Garamond (body/quotes), Jost (utility/nav) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<!-- Fonts: Cormorant Garamond (display) + Inter (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ============================= -->
-  <!-- LOADING SCREEN                -->
-  <!-- ============================= -->
-  <div id="loader" class="loader" aria-hidden="true">
-    <div class="loader-inner">
-      <span class="loader-glyph">
-        <i class="fa-solid fa-horse-head"></i>
-      </span>
-      <div class="loader-bar-track">
-        <div class="loader-bar-fill" id="loaderBarFill"></div>
-      </div>
-      <p class="loader-text">UNTAMED<span class="loader-dot">.</span></p>
-    </div>
-  </div>
+<!-- ============ SCROLL PROGRESS (signature element: a flowing mane-line) ============ -->
+<svg class="progress-mane" viewBox="0 0 1200 6" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,3 Q50,0 100,3 T200,3 T300,3 T400,3 T500,3 T600,3 T700,3 T800,3 T900,3 T1000,3 T1100,3 T1200,3" />
+  <path class="progress-mane-fill" d="M0,3 Q50,0 100,3 T200,3 T300,3 T400,3 T500,3 T600,3 T700,3 T800,3 T900,3 T1000,3 T1100,3 T1200,3" />
+</svg>
 
-  <!-- ============================= -->
-  <!-- CUSTOM CURSOR                 -->
-  <!-- ============================= -->
-  <div class="cursor-dot" id="cursorDot"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+<!-- ============ CURSOR GLOW ============ -->
+<div class="mouse-glow" aria-hidden="true"></div>
 
-  <!-- ============================= -->
-  <!-- SCROLL PROGRESS (top bar)     -->
-  <!-- ============================= -->
-  <div class="scroll-progress" id="scrollProgress"></div>
+<!-- ============ FLOATING PARTICLES (dust motes) ============ -->
+<div class="particles" id="particles" aria-hidden="true"></div>
 
-  <!-- ============================= -->
-  <!-- NAVBAR                        -->
-  <!-- ============================= -->
-  <header class="navbar" id="navbar">
-    <div class="nav-inner">
-      <a href="#hero" class="nav-brand">
-        <svg class="nav-horseshoe" viewBox="0 0 44 44" aria-hidden="true">
-          <circle class="nav-horseshoe-track" cx="22" cy="22" r="18"></circle>
-          <circle class="nav-horseshoe-fill" id="navHorseshoeFill" cx="22" cy="22" r="18"></circle>
-        </svg>
-        <span>Untamed</span>
-      </a>
-
-      <nav class="nav-links" id="navLinks">
-        <a href="#hero" class="nav-link active" data-nav>Hero</a>
-        <a href="#cinema" class="nav-link" data-nav>Cinema</a>
-        <a href="#horses" class="nav-link" data-nav>Horses</a>
-        <a href="#breeds" class="nav-link" data-nav>Breeds</a>
-        <a href="#quotes" class="nav-link" data-nav>Quotes</a>
-        <a href="#timeline" class="nav-link" data-nav>Timeline</a>
-        <a href="#gallery" class="nav-link" data-nav>Gallery</a>
-        <a href="#finale" class="nav-link" data-nav>Finale</a>
-      </nav>
-
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
-
-  <main>
-
-    <!-- ============================= -->
-    <!-- 1. HERO SECTION               -->
-    <!-- ============================= -->
-    <section class="hero" id="hero">
-      <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
-
-      <div class="hero-bg-image" style="background-image: url('assets/hero-bg-placeholder.jpg');"></div>
-      <div class="hero-vignette"></div>
-      <div class="hero-gradient-anim"></div>
-
-      <div class="hero-content">
-        <p class="hero-eyebrow reveal-fade-up">A Fan-Made Cinematic Tribute</p>
-        <h1 class="hero-title">
-          <span class="hero-title-line" id="typingTarget"></span>
-          <span class="typing-cursor" id="typingCursor">|</span>
-        </h1>
-        <p class="hero-subtitle reveal-fade-up" data-delay="200">
-          Where stardom meets the wild &mdash; a story told through grit, glamour and the galloping spirit of horses.
-        </p>
-
-        <div class="hero-cta reveal-fade-up" data-delay="400">
-          <a href="#cinema" class="btn btn-primary" data-ripple>
-            <span>Begin the Story</span>
-            <i class="fa-solid fa-angles-down"></i>
-          </a>
-          <a href="#gallery" class="btn btn-ghost" data-ripple>
-            <span>View Gallery</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="scroll-indicator" aria-hidden="true">
-        <span class="scroll-indicator-text">Scroll</span>
-        <div class="scroll-indicator-line">
-          <span class="scroll-indicator-dot"></span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================= -->
-    <!-- 2. CINEMATIC SECTION          -->
-    <!-- ============================= -->
-    <section class="cinema" id="cinema">
-      <div class="cinema-parallax-bg" data-parallax></div>
-      <div class="film-grain" aria-hidden="true"></div>
-
-      <div class="container cinema-grid">
-        <div class="cinema-visual reveal-fade-right">
-          <div class="silhouette-frame glass">
-            <!-- Silhouette placeholder: replace with your own artwork -->
-            <svg class="silhouette-figure" viewBox="0 0 300 420" aria-label="Silhouette of a cinematic figure">
-              <defs>
-                <linearGradient id="silGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#d4af37" stop-opacity="0.9" />
-                  <stop offset="100%" stop-color="#8b6914" stop-opacity="0.5" />
-                </linearGradient>
-              </defs>
-              <path fill="url(#silGrad)" d="M150 18C168 18 182 33 182 52C182 66 175 78 164 85C190 96 208 118 213 148L224 210C226 222 220 233 209 236L216 330C218 344 208 356 194 357L190 400C189 409 181 416 172 416L128 416C119 416 111 409 110 400L106 357C92 356 82 344 84 330L91 236C80 233 74 222 76 210L87 148C92 118 110 96 136 85C125 78 118 66 118 52C118 33 132 18 150 18Z"/>
-            </svg>
-            <div class="spotlight-glow"></div>
-          </div>
-          <span class="frame-caption">assets/silhouette-hero-placeholder.svg</span>
-        </div>
-
-        <div class="cinema-copy">
-          <span class="eyebrow reveal-fade-up">The Legend On Screen</span>
-          <h2 class="section-title reveal-fade-up">Larger Than <span class="text-gold">Life</span></h2>
-          <p class="reveal-fade-up" data-delay="150">
-            Every frame carries presence. A silhouette in the spotlight, a shadow that commands the screen &mdash; this
-            tribute imagines that same magnetic energy carried into open fields, where horses run free and legends
-            are made of grit, not glamour alone.
-          </p>
-          <p class="reveal-fade-up" data-delay="250">
-            This isn't a biography. It's a mood board of admiration &mdash; built by a fan, for fans, celebrating the
-            idea of unstoppable spirit in two of its most iconic forms.
-          </p>
-
-          <div class="stat-row reveal-fade-up" data-delay="350">
-            <div class="stat-item">
-              <span class="stat-number" data-count="30" data-suffix="+">0</span>
-              <span class="stat-label">Years of Stardom</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number" data-count="150" data-suffix="+">0</span>
-              <span class="stat-label">Films Celebrated</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number" data-count="9" data-suffix="">0</span>
-              <span class="stat-label">Horse Breeds Featured</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================= -->
-    <!-- 3. HORSE SHOWCASE             -->
-    <!-- ============================= -->
-    <section class="showcase" id="horses">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow reveal-fade-up">The Untamed Spirit</span>
-          <h2 class="section-title reveal-fade-up">Horse <span class="text-gold">Showcase</span></h2>
-          <p class="section-sub reveal-fade-up" data-delay="150">
-            Four moods, one spirit &mdash; strength, elegance, freedom and loyalty, captured in motion.
-          </p>
-        </div>
-
-        <div class="showcase-grid">
-          <article class="showcase-card glass reveal-fade-up" data-delay="0" data-tilt>
-            <div class="showcase-media">
-              <img src="assets/horse-showcase-strength.jpg" alt="Placeholder image representing a powerful horse in motion" loading="lazy" />
-              <div class="showcase-media-overlay"></div>
-            </div>
-            <div class="showcase-body">
-              <i class="fa-solid fa-bolt showcase-icon"></i>
-              <h3>Strength</h3>
-              <p>Muscle and momentum, built for the long run and the sudden sprint alike.</p>
-            </div>
-          </article>
-
-          <article class="showcase-card glass reveal-fade-up" data-delay="100" data-tilt>
-            <div class="showcase-media">
-              <img src="assets/horse-showcase-elegance.jpg" alt="Placeholder image representing an elegant horse" loading="lazy" />
-              <div class="showcase-media-overlay"></div>
-            </div>
-            <div class="showcase-body">
-              <i class="fa-solid fa-feather showcase-icon"></i>
-              <h3>Elegance</h3>
-              <p>Every stride composed, every turn deliberate &mdash; grace that never looks rehearsed.</p>
-            </div>
-          </article>
-
-          <article class="showcase-card glass reveal-fade-up" data-delay="200" data-tilt>
-            <div class="showcase-media">
-              <img src="assets/horse-showcase-freedom.jpg" alt="Placeholder image representing a free-running horse" loading="lazy" />
-              <div class="showcase-media-overlay"></div>
-            </div>
-            <div class="showcase-body">
-              <i class="fa-solid fa-wind showcase-icon"></i>
-              <h3>Freedom</h3>
-              <p>No arena, no leash &mdash; just open ground and a horizon worth chasing.</p>
-            </div>
-          </article>
-
-          <article class="showcase-card glass reveal-fade-up" data-delay="300" data-tilt>
-            <div class="showcase-media">
-              <img src="assets/horse-showcase-loyalty.jpg" alt="Placeholder image representing a loyal horse and rider bond" loading="lazy" />
-              <div class="showcase-media-overlay"></div>
-            </div>
-            <div class="showcase-body">
-              <i class="fa-solid fa-heart-circle-check showcase-icon"></i>
-              <h3>Loyalty</h3>
-              <p>The quiet bond between rider and horse &mdash; trust earned one ride at a time.</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================= -->
-    <!-- 4. HORSE BREEDS GRID          -->
-    <!-- ============================= -->
-    <section class="breeds" id="breeds">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow reveal-fade-up">Icons Of The Field</span>
-          <h2 class="section-title reveal-fade-up">Famous <span class="text-gold">Breeds</span></h2>
-          <p class="section-sub reveal-fade-up" data-delay="150">
-            Nine breeds, nine personalities &mdash; hover to meet each one.
-          </p>
-        </div>
-
-        <div class="breeds-grid">
-          <div class="breed-card reveal-scale" data-delay="0">
-            <img src="assets/breed-arabian.jpg" alt="Placeholder image of an Arabian horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Arabian</h4>
-              <p>Endurance &amp; fire, one of the oldest breeds on earth.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="60">
-            <img src="assets/breed-thoroughbred.jpg" alt="Placeholder image of a Thoroughbred horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Thoroughbred</h4>
-              <p>Built for speed, the racing world's reigning champion.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="120">
-            <img src="assets/breed-marwari.jpg" alt="Placeholder image of a Marwari horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Marwari</h4>
-              <p>Curved ears, royal roots &mdash; India's own desert legend.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="0">
-            <img src="assets/breed-friesian.jpg" alt="Placeholder image of a Friesian horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Friesian</h4>
-              <p>Jet-black and majestic, straight out of a period film.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="60">
-            <img src="assets/breed-appaloosa.jpg" alt="Placeholder image of an Appaloosa horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Appaloosa</h4>
-              <p>Spotted coat, wild-west spirit, impossible to miss.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="120">
-            <img src="assets/breed-mustang.jpg" alt="Placeholder image of a Mustang horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Mustang</h4>
-              <p>Feral and free-roaming, the definition of untamed.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="0">
-            <img src="assets/breed-andalusian.jpg" alt="Placeholder image of an Andalusian horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Andalusian</h4>
-              <p>Baroque elegance with centuries of dressage pedigree.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="60">
-            <img src="assets/breed-clydesdale.jpg" alt="Placeholder image of a Clydesdale horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Clydesdale</h4>
-              <p>Feathered hooves, gentle giants of the working world.</p>
-            </div>
-          </div>
-          <div class="breed-card reveal-scale" data-delay="120">
-            <img src="assets/breed-kathiawari.jpg" alt="Placeholder image of a Kathiawari horse" loading="lazy" />
-            <div class="breed-info">
-              <h4>Kathiawari</h4>
-              <p>Hardy and loyal, bred for the terrain of Gujarat.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================= -->
-    <!-- 5. INSPIRATIONAL QUOTES       -->
-    <!-- ============================= -->
-    <section class="quotes" id="quotes">
-      <div class="quotes-bg-glow" aria-hidden="true"></div>
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow reveal-fade-up">Words To Ride By</span>
-          <h2 class="section-title reveal-fade-up">A Few <span class="text-gold">Lines</span> That Stay</h2>
-        </div>
-
-        <div class="quotes-grid">
-          <blockquote class="quote-card glass reveal-blur" data-delay="0">
-            <i class="fa-solid fa-quote-left quote-mark"></i>
-            <p>Stardom fades with the lights. Character is what walks home with you.</p>
-            <cite>&mdash; Fan Reflection</cite>
-          </blockquote>
-          <blockquote class="quote-card glass reveal-blur" data-delay="120">
-            <i class="fa-solid fa-quote-left quote-mark"></i>
-            <p>A horse never runs for applause. It runs because freedom asked it to.</p>
-            <cite>&mdash; Old Stable Saying</cite>
-          </blockquote>
-          <blockquote class="quote-card glass reveal-blur" data-delay="240">
-            <i class="fa-solid fa-quote-left quote-mark"></i>
-            <p>Discipline is the quiet stunt double behind every great entrance.</p>
-            <cite>&mdash; Fan Reflection</cite>
-          </blockquote>
-          <blockquote class="quote-card glass reveal-blur" data-delay="360">
-            <i class="fa-solid fa-quote-left quote-mark"></i>
-            <p>Loyalty doesn't need a script. It just shows up, every single time.</p>
-            <cite>&mdash; Old Stable Saying</cite>
-          </blockquote>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================= -->
-    <!-- 6. INTERACTIVE TIMELINE       -->
-    <!-- ============================= -->
-    <section class="timeline-section" id="timeline">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow reveal-fade-up">The Journey So Far</span>
-          <h2 class="section-title reveal-fade-up">A <span class="text-gold">Timeline</span> Of Moments</h2>
-        </div>
-
-        <div class="timeline">
-          <div class="timeline-track" aria-hidden="true">
-            <div class="timeline-track-fill" id="timelineFill"></div>
-          </div>
-
-          <div class="timeline-item reveal-fade-right" data-delay="0">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content glass">
-              <span class="timeline-year">Act I</span>
-              <h4>The First Spark</h4>
-              <p>A screen debut that hinted at decades of staying power to come.</p>
-            </div>
-          </div>
-
-          <div class="timeline-item reveal-fade-left" data-delay="100">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content glass">
-              <span class="timeline-year">Act II</span>
-              <h4>Rising Momentum</h4>
-              <p>Roles that pushed the limits of range, charm, and quiet intensity.</p>
-            </div>
-          </div>
-
-          <div class="timeline-item reveal-fade-right" data-delay="200">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content glass">
-              <span class="timeline-year">Act III</span>
-              <h4>The Icon Era</h4>
-              <p>A presence so consistent it became a genre unto itself.</p>
-            </div>
-          </div>
-
-          <div class="timeline-item reveal-fade-left" data-delay="300">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content glass">
-              <span class="timeline-year">Act IV</span>
-              <h4>Legacy In Motion</h4>
-              <p>Still running, still riding forward &mdash; the story hasn't slowed down.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================= -->
-    <!-- 7. GALLERY                    -->
-    <!-- ============================= -->
-    <section class="gallery" id="gallery">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow reveal-fade-up">Frame By Frame</span>
-          <h2 class="section-title reveal-fade-up">The <span class="text-gold">Gallery</span></h2>
-          <p class="section-sub reveal-fade-up" data-delay="150">Hover to zoom into every frame.</p>
-        </div>
-
-        <div class="gallery-grid">
-          <figure class="gallery-item reveal-fade-up" data-delay="0">
-            <img src="assets/gallery-frame-01.jpg" alt="Placeholder gallery image one" loading="lazy" />
-            <figcaption>Opening Frame</figcaption>
-          </figure>
-          <figure class="gallery-item reveal-fade-up" data-delay="60">
-            <img src="assets/gallery-frame-02.jpg" alt="Placeholder gallery image two" loading="lazy" />
-            <figcaption>The Stable</figcaption>
-          </figure>
-          <figure class="gallery-item reveal-fade-up" data-delay="120">
-            <img src="assets/gallery-frame-03.jpg" alt="Placeholder gallery image three" loading="lazy" />
-            <figcaption>Golden Hour</figcaption>
-          </figure>
-          <figure class="gallery-item reveal-fade-up" data-delay="180">
-            <img src="assets/gallery-frame-04.jpg" alt="Placeholder gallery image four" loading="lazy" />
-            <figcaption>Full Gallop</figcaption>
-          </figure>
-          <figure class="gallery-item reveal-fade-up" data-delay="240">
-            <img src="assets/gallery-frame-05.jpg" alt="Placeholder gallery image five" loading="lazy" />
-            <figcaption>City Lights</figcaption>
-          </figure>
-          <figure class="gallery-item reveal-fade-up" data-delay="300">
-            <img src="assets/gallery-frame-06.jpg" alt="Placeholder gallery image six" loading="lazy" />
-            <figcaption>Closing Shot</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================= -->
-    <!-- 8. FINALE / THANK YOU         -->
-    <!-- ============================= -->
-    <section class="finale" id="finale">
-      <canvas id="finaleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
-      <div class="finale-glow"></div>
-
-      <div class="finale-content">
-        <i class="fa-solid fa-horse-head finale-icon reveal-scale"></i>
-        <h2 class="finale-title reveal-fade-up">Thank You For <span class="text-gold">Riding Along</span></h2>
-        <p class="finale-text reveal-fade-up" data-delay="150">
-          This tribute was built with nothing but admiration &mdash; for the star who never stopped showing up, and
-          the horses who never stopped running. A fan project, made frame by frame, out of pure love for the craft.
-        </p>
-        <div class="finale-signature reveal-fade-up" data-delay="300">
-          <span>Crafted by a fan</span>
-          <span class="finale-divider">&bull;</span>
-          <span>For the fans</span>
-        </div>
-
-        <a href="#hero" class="btn btn-primary finale-btn reveal-fade-up" data-delay="450" data-ripple>
-          <span>Back To The Beginning</span>
-          <i class="fa-solid fa-arrow-up"></i>
-        </a>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ============================= -->
-  <!-- FOOTER                        -->
-  <!-- ============================= -->
-  <footer class="site-footer">
-    <div class="footer-glow" aria-hidden="true"></div>
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <i class="fa-solid fa-horse-head"></i>
-        <span>Untamed</span>
-      </div>
-      <p class="footer-disclaimer">
-        An unofficial, non-commercial fan tribute. Not affiliated with or endorsed by any individual referenced.
-        All imagery on this page is placeholder artwork.
-      </p>
-      <div class="footer-socials">
-        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#" aria-label="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
-        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-        <a href="#" aria-label="Pinterest"><i class="fa-brands fa-pinterest"></i></a>
-      </div>
-      <p class="footer-copy">&copy; <span id="footerYear"></span> Untamed &mdash; A Fan Project. Made with <i class="fa-solid fa-heart"></i> and imagination.</p>
-    </div>
-  </footer>
-
-  <!-- ============================= -->
-  <!-- SCROLL TO TOP                 -->
-  <!-- ============================= -->
-  <button class="scroll-top" id="scrollTop" aria-label="Scroll back to top">
-    <i class="fa-solid fa-chevron-up"></i>
-  </button>
-
-  <!-- Lightbox for gallery zoom (populated by script.js) -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Close image preview">
-      <i class="fa-solid fa-xmark"></i>
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">EQU<span>U</span>S</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
     </button>
-    <img src="" alt="" id="lightboxImg" class="lightbox-img" />
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#freedom" data-nav>Freedom</a></li>
+      <li><a href="#breeds" data-nav>Breeds</a></li>
+      <li><a href="#timeline" data-nav>History</a></li>
+      <li><a href="#gallery" data-nav>Gallery</a></li>
+      <li><a href="#facts" data-nav>Facts</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============ 1. HERO ============ -->
+<section class="hero" id="hero">
+  <div class="hero-media">
+    <video
+      class="hero-video"
+      autoplay muted loop playsinline
+      poster="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wild_horses_at_sunset_%28cropped%29.jpg/1920px-Wild_horses_at_sunset_%28cropped%29.jpg"
+      id="heroVideo">
+      <source src="https://upload.wikimedia.org/wikipedia/commons/transcoded/2/2f/Wild_Horses_Kaimanawa_-_New_Zealand.webm/Wild_Horses_Kaimanawa_-_New_Zealand.webm.480p.vp9.webm" type="video/webm">
+      <source src="https://cdn.coverr.co/videos/coverr-a-herd-of-horses-running-4571/1080p.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-vignette"></div>
   </div>
 
-  <script src="script.js"></script>
+  <div class="hero-content">
+    <p class="hero-eyebrow reveal-fade-up" data-delay="0">A CINEMATIC PORTRAIT</p>
+    <h1 class="hero-title" id="heroTitle" aria-label="THE SPIRIT OF THE HORSE"></h1>
+    <p class="hero-subtitle reveal-fade-up" data-delay="600">
+      Four thousand years of partnership. One unbroken instinct for freedom.
+    </p>
+  </div>
+
+  <button class="scroll-indicator" id="scrollIndicator" aria-label="Scroll to explore">
+    <span class="scroll-text">SCROLL</span>
+    <span class="scroll-line"><span class="scroll-dot"></span></span>
+  </button>
+</section>
+
+<!-- ============ 2. FREEDOM ============ -->
+<section class="freedom" id="freedom">
+  <div class="freedom-parallax" id="freedomParallax">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wild_Mustang_Horses.jpg/1920px-Wild_Mustang_Horses.jpg"
+      alt="A herd of wild horses running free across open plains"
+      loading="lazy"
+      onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=1920&auto=format&fit=crop';">
+  </div>
+  <div class="freedom-scrim"></div>
+  <div class="freedom-content">
+    <span class="eyebrow reveal-fade-right">01 — THE OPEN PLAIN</span>
+    <h2 class="section-title reveal-fade-right" data-delay="150">Freedom is not<br>a metaphor.</h2>
+    <p class="freedom-text reveal-fade-right" data-delay="300">
+      Long before the saddle, before the bit, before a single rope was thrown —
+      the horse ran. Across steppe and prairie, through canyon and storm, it moved
+      not because it was told to, but because motion is the animal's native tongue.
+      To watch a herd run unbroken is to witness the oldest argument for liberty
+      the natural world has ever made.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 3. FAMOUS HORSE BREEDS ============ -->
+<section class="breeds" id="breeds">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">02 — THE BLOODLINES</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">Famous Breeds of the World</h2>
+    <p class="section-sub reveal-fade-up" data-delay="300">Each shaped by a different land, a different demand, a different dream.</p>
+  </div>
+
+  <div class="breed-grid">
+
+    <article class="breed-card reveal-zoom" data-delay="0">
+      <div class="breed-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Arabian_Horse_Herd_Rearing.jpg/800px-Arabian_Horse_Herd_Rearing.jpg" alt="Arabian horse rearing" loading="lazy">
+      </div>
+      <div class="breed-info">
+        <h3>Arabian</h3>
+        <span class="breed-origin">Arabian Peninsula</span>
+        <p>Prized for stamina and a dished profile; the foundation blood of nearly every modern light breed.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="120">
+      <div class="breed-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Andalusian_horse.jpg/800px-Andalusian_horse.jpg" alt="Andalusian horse" loading="lazy">
+      </div>
+      <div class="breed-info">
+        <h3>Andalusian</h3>
+        <span class="breed-origin">Iberian Peninsula</span>
+        <p>Baroque and powerful, bred for centuries as a warhorse, then a courtly performer.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="240">
+      <div class="breed-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Nokota_Horses.jpg/800px-Nokota_Horses.jpg" alt="Mustang horses in the wild" loading="lazy">
+      </div>
+      <div class="breed-info">
+        <h3>Mustang</h3>
+        <span class="breed-origin">North American Plains</span>
+        <p>Descended from Iberian stock gone feral — the living symbol of the American frontier.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="360">
+      <div class="breed-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Friesian_Horse.jpg/800px-Friesian_Horse.jpg" alt="Friesian horse" loading="lazy">
+      </div>
+      <div class="breed-info">
+        <h3>Friesian</h3>
+        <span class="breed-origin">Netherlands</span>
+        <p>Jet black, feather-legged, and famous for a trot that looks choreographed.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="480">
+      <div class="breed-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Thoroughbred.jpg/800px-Thoroughbred.jpg" alt="Thoroughbred racehorse" loading="lazy">
+      </div>
+      <div class="breed-info">
+        <h3>Thoroughbred</h3>
+        <span class="breed-origin">England</span>
+        <p>Bred purely for speed since the 17th century — the engine of modern horse racing.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="600">
+      <div class="breed-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Icelandic_horses.jpg/800px-Icelandic_horses.jpg" alt="Icelandic horses" loading="lazy">
+      </div>
+      <div class="breed-info">
+        <h3>Icelandic</h3>
+        <span class="breed-origin">Iceland</span>
+        <p>Isolated for a thousand years, it kept a rare fifth gait: the smooth, ground-covering tölt.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============ 4. TIMELINE ============ -->
+<section class="timeline-section" id="timeline">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">03 — FOUR MILLENNIA</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">A History Written in Hoofprints</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-item reveal-fade-left" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">3500 BCE</span>
+        <h3>First Domestication</h3>
+        <p>On the Eurasian steppe, the Botai culture becomes the first known people to ride and keep horses — a turning point in human mobility.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-right" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1600 BCE</span>
+        <h3>The War Chariot</h3>
+        <p>Horse-drawn chariots transform warfare across Egypt, the Near East and the Mediterranean, reshaping empires.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-left" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1200s CE</span>
+        <h3>The Mongol Horseback Empire</h3>
+        <p>Genghis Khan's mounted armies cover more ground faster than any force in history, built entirely on horsemanship.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-right" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1600s CE</span>
+        <h3>Horses Return to the Americas</h3>
+        <p>Spanish horses reintroduce the species to a continent it once roamed prehistorically — reshaping Indigenous cultures of the Plains.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-left" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1900s CE</span>
+        <h3>From Engine to Icon</h3>
+        <p>As machines replace horsepower in industry, the horse is freed into sport, art and companionship — valued for spirit, not labor.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-right" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">Today</span>
+        <h3>A Living Symbol</h3>
+        <p>Wild herds still run from Nevada to the Kaimanawa Ranges — a last visible thread to a world before fences.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. GALLERY ============ -->
+<section class="gallery-section" id="gallery">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">04 — IN FRAME</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">Gallery</h2>
+    <p class="section-sub reveal-fade-up" data-delay="300">Click any frame to view.</p>
+  </div>
+
+  <div class="masonry" id="masonry">
+    <div class="masonry-item tall" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wild_Mustang_Horses.jpg/1920px-Wild_Mustang_Horses.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wild_Mustang_Horses.jpg/640px-Wild_Mustang_Horses.jpg" alt="Wild mustangs running" loading="lazy">
+    </div>
+    <div class="masonry-item" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Arabian_Horse_Herd_Rearing.jpg/1280px-Arabian_Horse_Herd_Rearing.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Arabian_Horse_Herd_Rearing.jpg/640px-Arabian_Horse_Herd_Rearing.jpg" alt="Arabian horse rearing" loading="lazy">
+    </div>
+    <div class="masonry-item short" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Friesian_Horse.jpg/1280px-Friesian_Horse.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Friesian_Horse.jpg/640px-Friesian_Horse.jpg" alt="Friesian horse portrait" loading="lazy">
+    </div>
+    <div class="masonry-item" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Thoroughbred.jpg/1280px-Thoroughbred.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Thoroughbred.jpg/640px-Thoroughbred.jpg" alt="Thoroughbred galloping" loading="lazy">
+    </div>
+    <div class="masonry-item tall" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Icelandic_horses.jpg/1280px-Icelandic_horses.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Icelandic_horses.jpg/640px-Icelandic_horses.jpg" alt="Icelandic horses in snow" loading="lazy">
+    </div>
+    <div class="masonry-item short" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Nokota_Horses.jpg/1280px-Nokota_Horses.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Nokota_Horses.jpg/640px-Nokota_Horses.jpg" alt="Nokota horses on the plain" loading="lazy">
+    </div>
+    <div class="masonry-item" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Andalusian_horse.jpg/1280px-Andalusian_horse.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Andalusian_horse.jpg/640px-Andalusian_horse.jpg" alt="Andalusian horse" loading="lazy">
+    </div>
+    <div class="masonry-item tall" data-full="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wild_horses_at_sunset_%28cropped%29.jpg/1280px-Wild_horses_at_sunset_%28cropped%29.jpg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wild_horses_at_sunset_%28cropped%29.jpg/640px-Wild_horses_at_sunset_%28cropped%29.jpg" alt="Horses silhouetted at sunset" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <img src="" alt="" id="lightboxImg">
+</div>
+
+<!-- ============ 6. QUOTES ============ -->
+<section class="quotes-section" id="quotes">
+  <div class="quotes-bg"></div>
+  <div class="quote-wrap">
+    <span class="quote-mark">&ldquo;</span>
+    <p class="quote-text" id="quoteText"></p>
+    <p class="quote-author" id="quoteAuthor"></p>
+    <div class="quote-dots" id="quoteDots"></div>
+  </div>
+</section>
+
+<!-- ============ 7. FUN FACTS ============ -->
+<section class="facts-section" id="facts">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">05 — BY THE NUMBERS</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">Fun Facts</h2>
+  </div>
+
+  <div class="facts-grid">
+    <div class="fact-card reveal-fade-up" data-delay="0">
+      <span class="fact-number" data-target="332" data-suffix="&deg;">0</span>
+      <span class="fact-label">Field of vision — nearly a full circle</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="120">
+      <span class="fact-number" data-target="55" data-suffix=" mph">0</span>
+      <span class="fact-label">Top recorded sprint speed</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="240">
+      <span class="fact-number" data-target="205" data-suffix="">0</span>
+      <span class="fact-label">Distinct breeds recognized worldwide</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="360">
+      <span class="fact-number" data-target="30" data-suffix="+ yrs">0</span>
+      <span class="fact-label">Average domestic lifespan</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="480">
+      <span class="fact-number" data-target="17" data-suffix=" hrs">0</span>
+      <span class="fact-label">Time spent standing per day</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="600">
+      <span class="fact-number" data-target="5500" data-suffix="+" data-plural="">0</span>
+      <span class="fact-label">Years since first domestication</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. ENDING ============ -->
+<section class="ending" id="ending">
+  <div class="ending-media">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wild_horses_at_sunset_%28cropped%29.jpg/1920px-Wild_horses_at_sunset_%28cropped%29.jpg"
+      alt="Horses silhouetted against a golden sunset"
+      loading="lazy"
+      onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=1920&auto=format&fit=crop';">
+    <div class="ending-overlay"></div>
+  </div>
+  <div class="ending-content reveal-blur" id="endingContent">
+    <span class="eyebrow">EQUUS</span>
+    <h2>Wild at heart.<br>Free by nature.</h2>
+    <div class="ending-rule"></div>
+    <p>A film for anyone who has ever watched a horse run<br>and understood, for a moment, what freedom looks like.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo">EQUUS</span>
+    <span class="footer-line">A cinematic documentary tribute to the horse.</span>
+  </div>
+</footer>
+
+<!-- ============ SCROLL TO TOP ============ -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script src="script.js"></script>
 </body>
 </html>
