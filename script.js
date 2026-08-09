@@ -144,19 +144,24 @@
   }
 
   function moveYesButton() {
+    // measure BEFORE any position change, so width/height are accurate
+    const rect = yesBtn.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+
     if (!yesBtn.classList.contains("runaway")) {
       // freeze current position first so the transition starts from here
-      const rect = yesBtn.getBoundingClientRect();
+      yesBtn.style.width = w + "px";
+      yesBtn.style.height = h + "px";
       yesBtn.style.left = rect.left + "px";
       yesBtn.style.top = rect.top + "px";
       yesBtn.style.right = "auto";
       yesBtn.style.bottom = "auto";
       yesBtn.classList.add("runaway");
-      // force reflow so the browser registers the starting point
+      // force reflow so the browser registers the starting point before we move it
       void yesBtn.offsetWidth;
     }
 
-    const { w, h } = getButtonSize();
     const margin = 16;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -206,11 +211,10 @@
   // keep the button inside the viewport if the window is resized
   window.addEventListener("resize", () => {
     if (!yesBtn.classList.contains("runaway")) return;
-    const { w, h } = getButtonSize();
-    const margin = 12;
     const rect = yesBtn.getBoundingClientRect();
-    const clampedLeft = Math.min(rect.left, window.innerWidth - w - margin);
-    const clampedTop = Math.min(rect.top, window.innerHeight - h - margin);
+    const margin = 16;
+    const clampedLeft = Math.min(rect.left, window.innerWidth - rect.width - margin);
+    const clampedTop = Math.min(rect.top, window.innerHeight - rect.height - margin);
     yesBtn.style.left = Math.max(margin, clampedLeft) + "px";
     yesBtn.style.top = Math.max(margin, clampedTop) + "px";
   });
