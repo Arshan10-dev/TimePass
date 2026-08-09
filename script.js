@@ -235,8 +235,8 @@
   const subtext = document.getElementById("subtext");
 
   noBtn.addEventListener("click", () => {
-    question.textContent = "😂 Hahahaa... I know!";
-    subtext.textContent = "at least you're honest";
+    question.textContent = "😂 Hahahaa.... I know!";
+    subtext.textContent = "at least you're honest, Let it Go na";
     card.classList.add("answered");
     yesBtn.style.display = "none";
     playLaugh();
