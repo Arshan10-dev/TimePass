@@ -1,315 +1,538 @@
-(() => {
-  "use strict";
+/* =========================================================================
+   EQUUS — script.js
+   Pure vanilla JS. No dependencies, no build step.
+   ========================================================================= */
 
-  /* ============================================
-     Tiny sound synth (no external audio files)
-  ============================================ */
-  let audioCtx = null;
-  function getCtx() {
-    if (!audioCtx) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) audioCtx = new AC();
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ======================================================================
+     0. UTILITIES
+     ====================================================================== */
+  function throttleRAF(fn) {
+    var ticking = false;
+    return function () {
+      var args = arguments, ctx = this;
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          fn.apply(ctx, args);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+  }
+
+  function onReady(cb) {
+    if (document.readyState !== 'loading') cb();
+    else document.addEventListener('DOMContentLoaded', cb);
+  }
+
+  /* ======================================================================
+     1. SCROLL PROGRESS BAR (mane-line signature element)
+     ====================================================================== */
+  function initScrollProgress() {
+    var fill = document.querySelector('.progress-mane-fill');
+    if (!fill) return;
+    var length = 3400; // approx path length used for dasharray
+    fill.style.strokeDasharray = length;
+
+    function update() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+      fill.style.strokeDashoffset = length - length * pct;
     }
-    return audioCtx;
+    window.addEventListener('scroll', throttleRAF(update), { passive: true });
+    update();
   }
 
-  function playTone(freqStart, freqEnd, duration, type = "sine", volume = 0.06) {
-    const ctx = getCtx();
-    if (!ctx) return;
-    if (ctx.state === "suspended") ctx.resume();
+  /* ======================================================================
+     2. NAVBAR — sticky style change, active link highlight, mobile toggle
+     ====================================================================== */
+  function initNavbar() {
+    var navbar = document.getElementById('navbar');
+    var toggle = document.getElementById('navToggle');
+    var links = document.getElementById('navLinks');
+    var navAnchors = document.querySelectorAll('[data-nav]');
 
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(
-      Math.max(freqEnd, 1),
-      ctx.currentTime + duration
-    );
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    function onScroll() {
+      if (window.pageYOffset > 60) navbar.classList.add('scrolled');
+      else navbar.classList.remove('scrolled');
+    }
+    window.addEventListener('scroll', throttleRAF(onScroll), { passive: true });
+    onScroll();
 
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  }
-
-  function playWhoosh() {
-    playTone(700, 180, 0.28, "sine", 0.05);
-  }
-
-  function playLaugh() {
-    // playful little descending giggle made of quick blips
-    const ctx = getCtx();
-    if (!ctx) return;
-    [520, 460, 600, 400].forEach((f, i) => {
-      setTimeout(() => playTone(f, f * 0.8, 0.14, "triangle", 0.05), i * 90);
+    toggle.addEventListener('click', function () {
+      var isOpen = links.classList.toggle('open');
+      toggle.classList.toggle('open', isOpen);
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
-  }
 
-  /* ============================================
-     Custom cursor
-  ============================================ */
-  const cursorDot = document.getElementById("cursorDot");
-  const cursorRing = document.getElementById("cursorRing");
-  const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-
-  if (!isTouch) {
-    let ringX = window.innerWidth / 2;
-    let ringY = window.innerHeight / 2;
-    let targetX = ringX;
-    let targetY = ringY;
-
-    window.addEventListener("mousemove", (e) => {
-      targetX = e.clientX;
-      targetY = e.clientY;
-      cursorDot.style.left = e.clientX + "px";
-      cursorDot.style.top = e.clientY + "px";
-    });
-
-    window.addEventListener("mousedown", () => cursorRing.classList.add("active"));
-    window.addEventListener("mouseup", () => cursorRing.classList.remove("active"));
-
-    function animateRing() {
-      ringX += (targetX - ringX) * 0.18;
-      ringY += (targetY - ringY) * 0.18;
-      cursorRing.style.left = ringX + "px";
-      cursorRing.style.top = ringY + "px";
-      requestAnimationFrame(animateRing);
-    }
-    animateRing();
-  }
-
-  /* ============================================
-     Background bubbles
-  ============================================ */
-  const bubbleField = document.getElementById("bubbles");
-  const BUBBLE_COUNT = 16;
-
-  for (let i = 0; i < BUBBLE_COUNT; i++) {
-    const b = document.createElement("div");
-    b.className = "bubble";
-    const size = 14 + Math.random() * 46;
-    b.style.width = size + "px";
-    b.style.height = size + "px";
-    b.style.left = Math.random() * 100 + "vw";
-    const duration = 9 + Math.random() * 10;
-    b.style.animationDuration = duration + "s";
-    b.style.animationDelay = -(Math.random() * duration) + "s";
-    bubbleField.appendChild(b);
-  }
-
-  /* ============================================
-     Floating background emojis
-  ============================================ */
-  const emojiField = document.getElementById("emojiField");
-  const EMOJIS = ["😂", "🥹", "😍", "✨", "💖", "😎", "🤣", "😉", "🌟", "😊"];
-  const EMOJI_COUNT = 14;
-
-  for (let i = 0; i < EMOJI_COUNT; i++) {
-    const el = document.createElement("div");
-    el.className = "floating-emoji";
-    el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-    el.style.left = Math.random() * 100 + "vw";
-    el.style.fontSize = 1.2 + Math.random() * 1.6 + "rem";
-    const duration = 10 + Math.random() * 12;
-    el.style.animationDuration = duration + "s";
-    el.style.animationDelay = -(Math.random() * duration) + "s";
-    emojiField.appendChild(el);
-  }
-
-  /* ============================================
-     YES button — the runaway button
-  ============================================ */
-  const yesBtn = document.getElementById("yesBtn");
-  const card = document.getElementById("card");
-  const hint = document.getElementById("hint");
-
-  const dodgeLines = [
-    "nice try 😌",
-    "not today! 💨",
-    "catch me if you can 🏃",
-    "nope nope nope 😂",
-    "so close! (not really)",
-    "keep trying 👀",
-    "the truth hurts 😆",
-  ];
-
-  let dodgeCount = 0;
-
-  function getButtonSize() {
-    const rect = yesBtn.getBoundingClientRect();
-    return { w: rect.width, h: rect.height };
-  }
-
-  function moveYesButton() {
-    // measure BEFORE any position change, so width/height are accurate
-    const rect = yesBtn.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height;
-
-    if (!yesBtn.classList.contains("runaway")) {
-      // freeze current position first so the transition starts from here
-      yesBtn.style.width = w + "px";
-      yesBtn.style.height = h + "px";
-      yesBtn.style.left = rect.left + "px";
-      yesBtn.style.top = rect.top + "px";
-      yesBtn.style.right = "auto";
-      yesBtn.style.bottom = "auto";
-      yesBtn.classList.add("runaway");
-
-      // IMPORTANT: .card has a transform-based float animation, and any
-      // transformed ancestor becomes the containing block for position:fixed
-      // children — which breaks our viewport-relative math and lets the
-      // button drift outside the visible window. Move it straight onto
-      // <body> so it's fixed relative to the real viewport, not the card.
-      document.body.appendChild(yesBtn);
-
-      // force reflow so the browser registers the starting point before we move it
-      void yesBtn.offsetWidth;
-    }
-
-    const margin = 16;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    const maxLeft = Math.max(margin, vw - w - margin);
-    const maxTop = Math.max(margin, vh - h - margin);
-
-    const newLeft = Math.min(maxLeft, margin + Math.random() * (maxLeft - margin));
-    const newTop = Math.min(maxTop, margin + Math.random() * (maxTop - margin));
-
-    yesBtn.style.left = newLeft + "px";
-    yesBtn.style.top = newTop + "px";
-
-    yesBtn.classList.remove("whoosh");
-    void yesBtn.offsetWidth;
-    yesBtn.classList.add("whoosh");
-
-    playWhoosh();
-
-    dodgeCount++;
-    if (dodgeCount % 2 === 0) {
-      hint.textContent = dodgeLines[Math.floor(Math.random() * dodgeLines.length)];
-    }
-  }
-
-  // Desktop: dodge the moment the cursor gets close
-  yesBtn.addEventListener("mouseenter", (e) => {
-    if (isTouch) return;
-    moveYesButton();
-  });
-
-  // Fallback / mobile: dodge on the attempted tap itself, never register a "yes"
-  yesBtn.addEventListener(
-    "touchstart",
-    (e) => {
-      e.preventDefault();
-      moveYesButton();
-    },
-    { passive: false }
-  );
-
-  yesBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    moveYesButton();
-  });
-
-  // keep the button inside the viewport if the window is resized
-  window.addEventListener("resize", () => {
-    if (!yesBtn.classList.contains("runaway")) return;
-    const rect = yesBtn.getBoundingClientRect();
-    const margin = 16;
-    const clampedLeft = Math.min(rect.left, window.innerWidth - rect.width - margin);
-    const clampedTop = Math.min(rect.top, window.innerHeight - rect.height - margin);
-    yesBtn.style.left = Math.max(margin, clampedLeft) + "px";
-    yesBtn.style.top = Math.max(margin, clampedTop) + "px";
-  });
-
-  /* ============================================
-     NO button — the honest one
-  ============================================ */
-  const noBtn = document.getElementById("noBtn");
-  const question = document.getElementById("question");
-  const subtext = document.getElementById("subtext");
-
-  noBtn.addEventListener("click", () => {
-    question.textContent = "😂 Hahahaa.... I know!";
-    subtext.textContent = "at least you're honest, Let it Go na";
-    card.classList.add("answered");
-    yesBtn.style.display = "none";
-    playLaugh();
-    launchConfetti();
-  });
-
-  /* ============================================
-     Confetti
-  ============================================ */
-  const canvas = document.getElementById("confettiCanvas");
-  const ctx2d = canvas.getContext("2d");
-  let confettiPieces = [];
-  let confettiRunning = false;
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas();
-
-  const CONFETTI_COLORS = ["#ff6ec4", "#7873f5", "#4adede", "#ffd76e", "#34e89e", "#ff5f6d"];
-
-  function launchConfetti() {
-    const pieceCount = 140;
-    for (let i = 0; i < pieceCount; i++) {
-      confettiPieces.push({
-        x: Math.random() * canvas.width,
-        y: -20 - Math.random() * canvas.height * 0.5,
-        w: 6 + Math.random() * 6,
-        h: 8 + Math.random() * 10,
-        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 12,
-        speedY: 2 + Math.random() * 3.5,
-        speedX: (Math.random() - 0.5) * 2.4,
-        life: 0,
-        maxLife: 260 + Math.random() * 80,
+    links.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        links.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
       });
-    }
-    if (!confettiRunning) {
-      confettiRunning = true;
-      requestAnimationFrame(updateConfetti);
-    }
-  }
-
-  function updateConfetti() {
-    ctx2d.clearRect(0, 0, canvas.width, canvas.height);
-
-    confettiPieces.forEach((p) => {
-      p.y += p.speedY;
-      p.x += p.speedX + Math.sin(p.y * 0.02) * 0.6;
-      p.rotation += p.rotationSpeed;
-      p.life++;
-
-      ctx2d.save();
-      ctx2d.translate(p.x, p.y);
-      ctx2d.rotate((p.rotation * Math.PI) / 180);
-      ctx2d.fillStyle = p.color;
-      ctx2d.globalAlpha = Math.max(0, 1 - p.life / p.maxLife);
-      ctx2d.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-      ctx2d.restore();
     });
 
-    confettiPieces = confettiPieces.filter(
-      (p) => p.life < p.maxLife && p.y < canvas.height + 40
-    );
+    // Active section highlight via IntersectionObserver
+    var sections = [];
+    navAnchors.forEach(function (a) {
+      var id = a.getAttribute('href');
+      var sec = document.querySelector(id);
+      if (sec) sections.push({ id: id, el: sec, link: a });
+    });
 
-    if (confettiPieces.length > 0) {
-      requestAnimationFrame(updateConfetti);
-    } else {
-      confettiRunning = false;
-      ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+    if ('IntersectionObserver' in window && sections.length) {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          var match = sections.find(function (s) { return s.el === entry.target; });
+          if (!match) return;
+          if (entry.isIntersecting) {
+            navAnchors.forEach(function (a) { a.classList.remove('active'); });
+            match.link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      sections.forEach(function (s) { obs.observe(s.el); });
     }
   }
+
+  /* ======================================================================
+     3. HERO — typing / letter-reveal title + scroll indicator click
+     ====================================================================== */
+  function initHeroTitle() {
+    var el = document.getElementById('heroTitle');
+    if (!el) return;
+    var text = el.getAttribute('aria-label') || el.textContent;
+    el.textContent = '';
+
+    var frag = document.createDocumentFragment();
+    var i = 0;
+    // Split into words first so a line break can only happen between words,
+    // never inside one, while each letter still animates individually.
+    var words = text.split(' ');
+    words.forEach(function (word, wIndex) {
+      var wordSpan = document.createElement('span');
+      wordSpan.className = 'word';
+      word.split('').forEach(function (ch) {
+        var span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = ch;
+        if (!reduceMotion) {
+          span.style.animationDelay = (0.15 + i * 0.035) + 's';
+        } else {
+          span.style.opacity = '1';
+          span.style.transform = 'none';
+        }
+        wordSpan.appendChild(span);
+        i++;
+      });
+      frag.appendChild(wordSpan);
+      if (wIndex < words.length - 1) {
+        var space = document.createElement('span');
+        space.className = 'char space';
+        space.textContent = '\u00A0';
+        if (!reduceMotion) {
+          space.style.animationDelay = (0.15 + i * 0.035) + 's';
+        } else {
+          space.style.opacity = '1';
+          space.style.transform = 'none';
+        }
+        frag.appendChild(space);
+        i++;
+      }
+    });
+    el.appendChild(frag);
+  }
+
+  function initScrollIndicator() {
+    var btn = document.getElementById('scrollIndicator');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var target = document.getElementById('freedom');
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  }
+
+  /* ======================================================================
+     4. SCROLL REVEAL SYSTEM — fade-up / fade-left / fade-right / zoom / blur
+     ====================================================================== */
+  function initScrollReveal() {
+    var targets = document.querySelectorAll('[class*="reveal-"]');
+    if (!targets.length) return;
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      targets.forEach(function (t) { t.classList.add('in-view'); });
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          var delay = parseInt(el.getAttribute('data-delay') || '0', 10);
+          setTimeout(function () { el.classList.add('in-view'); }, delay);
+          io.unobserve(el);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    targets.forEach(function (t) { io.observe(t); });
+  }
+
+  /* ======================================================================
+     5. PARALLAX — freedom section background image
+     ====================================================================== */
+  function initParallax() {
+    var el = document.getElementById('freedomParallax');
+    if (!el || reduceMotion) return;
+    var section = document.getElementById('freedom');
+
+    function update() {
+      var rect = section.getBoundingClientRect();
+      var vh = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      var progress = (vh - rect.top) / (vh + rect.height); // 0 -> 1
+      var offset = (progress - 0.5) * 90; // px range
+      el.style.transform = 'translateY(' + offset.toFixed(1) + 'px)';
+    }
+    window.addEventListener('scroll', throttleRAF(update), { passive: true });
+    window.addEventListener('resize', throttleRAF(update));
+    update();
+  }
+
+  /* ======================================================================
+     6. MOUSE GLOW
+     ====================================================================== */
+  function initMouseGlow() {
+    var glow = document.querySelector('.mouse-glow');
+    if (!glow || window.matchMedia('(max-width: 768px)').matches) return;
+    var raf = null, x = 0, y = 0;
+
+    window.addEventListener('mousemove', function (e) {
+      x = e.clientX; y = e.clientY;
+      if (!raf) {
+        raf = requestAnimationFrame(function () {
+          glow.style.transform = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%)';
+          raf = null;
+        });
+      }
+    }, { passive: true });
+  }
+
+  /* ======================================================================
+     7. FLOATING PARTICLES (ambient dust motes)
+     ====================================================================== */
+  function initParticles() {
+    var container = document.getElementById('particles');
+    if (!container || reduceMotion) return;
+    var count = window.matchMedia('(max-width: 768px)').matches ? 12 : 26;
+
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement('span');
+      p.className = 'particle';
+      var size = (Math.random() * 2.5 + 1.5).toFixed(1);
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = (Math.random() * 100) + 'vw';
+      p.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+      var duration = (Math.random() * 14 + 14).toFixed(1);
+      p.style.animationDuration = duration + 's';
+      p.style.animationDelay = (Math.random() * duration).toFixed(1) + 's';
+      container.appendChild(p);
+    }
+  }
+
+  /* ======================================================================
+     8. IMAGE TILT — breed cards react to cursor position
+     ====================================================================== */
+  function initImageTilt() {
+    if (reduceMotion || window.matchMedia('(pointer: coarse)').matches) return;
+    var cards = document.querySelectorAll('.breed-card');
+
+    cards.forEach(function (card) {
+      var bounds;
+      card.addEventListener('mouseenter', function () {
+        bounds = card.getBoundingClientRect();
+      });
+      card.addEventListener('mousemove', function (e) {
+        if (!bounds) bounds = card.getBoundingClientRect();
+        var px = (e.clientX - bounds.left) / bounds.width - 0.5;
+        var py = (e.clientY - bounds.top) / bounds.height - 0.5;
+        var rotX = (py * -6).toFixed(2);
+        var rotY = (px * 8).toFixed(2);
+        card.style.transform = 'translateY(-10px) perspective(900px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+      });
+      card.addEventListener('mouseleave', function () {
+        card.style.transform = '';
+      });
+    });
+  }
+
+  /* ======================================================================
+     9. RIPPLE EFFECT — buttons
+     ====================================================================== */
+  function initRipple() {
+    var selectors = '.scroll-indicator, .scroll-top, .lightbox-close';
+    document.querySelectorAll(selectors).forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        var rect = btn.getBoundingClientRect();
+        var size = Math.max(rect.width, rect.height) * 1.6;
+        var ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = ((e.clientX || rect.width / 2) - rect.left - size / 2) + 'px';
+        ripple.style.top = ((e.clientY || rect.height / 2) - rect.top - size / 2) + 'px';
+        btn.appendChild(ripple);
+        setTimeout(function () { ripple.remove(); }, 750);
+      });
+    });
+  }
+
+  /* ======================================================================
+     10. GALLERY LIGHTBOX
+     ====================================================================== */
+  function initLightbox() {
+    var items = document.querySelectorAll('.masonry-item');
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightboxImg');
+    var closeBtn = document.getElementById('lightboxClose');
+    if (!lightbox || !items.length) return;
+
+    function open(src, alt) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt || '';
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    items.forEach(function (item) {
+      item.addEventListener('click', function () {
+        var full = item.getAttribute('data-full');
+        var img = item.querySelector('img');
+        open(full || (img && img.src), img && img.alt);
+      });
+    });
+
+    closeBtn.addEventListener('click', close);
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  }
+
+  /* ======================================================================
+     11. AUTO-CHANGING QUOTES
+     ====================================================================== */
+  function initQuotes() {
+    var textEl = document.getElementById('quoteText');
+    var authorEl = document.getElementById('quoteAuthor');
+    var dotsEl = document.getElementById('quoteDots');
+    if (!textEl) return;
+
+    var quotes = [
+      { text: 'There is something about the outside of a horse that is good for the inside of a man.', author: 'Winston Churchill' },
+      { text: 'A horse gallops with his lungs, perseveres with his heart, and wins with his character.', author: 'Federico Tesio' },
+      { text: 'The wind of heaven is that which blows between a horse\u2019s ears.', author: 'Arabian Proverb' },
+      { text: 'No hour of life is wasted that is spent in the saddle.', author: 'Winston Churchill' },
+      { text: 'In riding a horse, we borrow freedom.', author: 'Helen Thomson' },
+      { text: 'Horses lend us the wings we lack.', author: 'Pam Brown' }
+    ];
+
+    var index = 0;
+    var timer = null;
+
+    quotes.forEach(function (_, i) {
+      var dot = document.createElement('span');
+      dot.className = 'quote-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', function () { show(i, true); });
+      dotsEl.appendChild(dot);
+    });
+
+    function show(i, userTriggered) {
+      index = i;
+      textEl.classList.add('quote-fade-out');
+      authorEl.classList.add('quote-fade-out');
+      setTimeout(function () {
+        textEl.textContent = quotes[index].text;
+        authorEl.textContent = '\u2014 ' + quotes[index].author;
+        textEl.classList.remove('quote-fade-out');
+        authorEl.classList.remove('quote-fade-out');
+        dotsEl.querySelectorAll('.quote-dot').forEach(function (d, di) {
+          d.classList.toggle('active', di === index);
+        });
+      }, reduceMotion ? 0 : 350);
+
+      if (userTriggered) restart();
+    }
+
+    function next() {
+      show((index + 1) % quotes.length);
+    }
+
+    function restart() {
+      if (timer) clearInterval(timer);
+      if (!reduceMotion) timer = setInterval(next, 5500);
+    }
+
+    show(0);
+    restart();
+  }
+
+  /* ======================================================================
+     12. COUNT-UP FUN FACTS
+     ====================================================================== */
+  function initCountUp() {
+    var cards = document.querySelectorAll('.fact-number');
+    if (!cards.length) return;
+
+    function animateCount(el) {
+      var target = parseFloat(el.getAttribute('data-target'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      var duration = 1600;
+      var startTime = null;
+
+      if (reduceMotion) {
+        el.textContent = target + suffix;
+        return;
+      }
+
+      function step(ts) {
+        if (!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3); // ease-out-cubic
+        var current = Math.floor(eased * target);
+        el.textContent = current + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            animateCount(entry.target);
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.6 });
+      cards.forEach(function (c) { io.observe(c); });
+    } else {
+      cards.forEach(animateCount);
+    }
+  }
+
+  /* ======================================================================
+     13. ENDING — blur reveal
+     ====================================================================== */
+  function initEndingReveal() {
+    var el = document.getElementById('endingContent');
+    if (!el) return;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      el.classList.add('in-view');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          el.classList.add('in-view');
+          io.unobserve(el);
+        }
+      });
+    }, { threshold: 0.35 });
+    io.observe(el);
+  }
+
+  /* ======================================================================
+     14. SCROLL TO TOP BUTTON
+     ====================================================================== */
+  function initScrollTop() {
+    var btn = document.getElementById('scrollTop');
+    if (!btn) return;
+
+    function onScroll() {
+      if (window.pageYOffset > window.innerHeight * 0.8) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    }
+    window.addEventListener('scroll', throttleRAF(onScroll), { passive: true });
+    onScroll();
+
+    btn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  }
+
+  /* ======================================================================
+     15. VIDEO FALLBACK — if hero video fails entirely, fall back to the
+     poster image (set as a CSS background so it still covers the frame
+     even if the <video> box itself is hidden), then to the gradient alone.
+     ====================================================================== */
+  function initVideoFallback() {
+    var video = document.getElementById('heroVideo');
+    var media = document.querySelector('.hero-media');
+    if (!video) return;
+
+    function fallback() {
+      video.style.display = 'none';
+      // Promote the poster to a full-bleed CSS background on the wrapper so
+      // the hero still shows an image instead of the bare gradient, and so a
+      // slow-loading poster doesn't leave Chromium's opaque broken-video box
+      // visible in the meantime.
+      var poster = video.getAttribute('poster');
+      if (poster && media) {
+        media.style.backgroundImage =
+          'linear-gradient(180deg, rgba(7,7,10,0.15), rgba(7,7,10,0.5)), url("' + poster + '")';
+        media.style.backgroundSize = 'cover';
+        media.style.backgroundPosition = 'center';
+      }
+    }
+
+    // Fires on the <video> element itself and, via capture, bubbles up from
+    // any failed <source> child too — so a single dead source doesn't wait
+    // for a generic timeout.
+    video.addEventListener('error', fallback, true);
+
+    // Safety net: if nothing has started loading shortly after mount (slow
+    // network, blocked domain, etc.), fail gracefully rather than leave an
+    // empty/broken frame for several seconds.
+    setTimeout(function () {
+      if (video.readyState === 0) fallback();
+    }, 2500);
+  }
+
+  /* ======================================================================
+     INIT
+     ====================================================================== */
+  onReady(function () {
+    initScrollProgress();
+    initNavbar();
+    initHeroTitle();
+    initScrollIndicator();
+    initScrollReveal();
+    initParallax();
+    initMouseGlow();
+    initParticles();
+    initImageTilt();
+    initRipple();
+    initLightbox();
+    initQuotes();
+    initCountUp();
+    initEndingReveal();
+    initScrollTop();
+    initVideoFallback();
+  });
+
 })();

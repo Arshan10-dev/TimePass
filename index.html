@@ -2,41 +2,362 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>Are You Cute? 🥹</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EQUUS — The Spirit of the Horse</title>
+<meta name="description" content="A cinematic documentary celebrating the beauty, freedom and power of the horse.">
+
+<!-- Fonts: Cormorant Garamond (display) + Inter (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- animated cursor follower -->
-  <div class="cursor-dot" id="cursorDot"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+<!-- ============ SCROLL PROGRESS (signature element: a flowing mane-line) ============ -->
+<svg class="progress-mane" viewBox="0 0 1200 6" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,3 Q50,0 100,3 T200,3 T300,3 T400,3 T500,3 T600,3 T700,3 T800,3 T900,3 T1000,3 T1100,3 T1200,3" />
+  <path class="progress-mane-fill" d="M0,3 Q50,0 100,3 T200,3 T300,3 T400,3 T500,3 T600,3 T700,3 T800,3 T900,3 T1000,3 T1100,3 T1200,3" />
+</svg>
 
-  <!-- floating bubbles -->
-  <div class="bubbles" id="bubbles"></div>
+<!-- ============ CURSOR GLOW ============ -->
+<div class="mouse-glow" aria-hidden="true"></div>
 
-  <!-- floating emojis -->
-  <div class="emoji-field" id="emojiField"></div>
+<!-- ============ FLOATING PARTICLES (dust motes) ============ -->
+<div class="particles" id="particles" aria-hidden="true"></div>
 
-  <!-- confetti canvas -->
-  <canvas id="confettiCanvas"></canvas>
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">EQU<span>U</span>S</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#freedom" data-nav>Freedom</a></li>
+      <li><a href="#breeds" data-nav>Breeds</a></li>
+      <li><a href="#timeline" data-nav>History</a></li>
+      <li><a href="#gallery" data-nav>Gallery</a></li>
+      <li><a href="#facts" data-nav>Facts</a></li>
+    </ul>
+  </div>
+</nav>
 
-  <main class="stage">
-    <section class="card" id="card">
-      <h1 class="question" id="question">Are you Cute? 🥹</h1>
-      <p class="subtext" id="subtext">tap a button, be honest (or don't)</p>
+<!-- ============ 1. HERO ============ -->
+<section class="hero" id="hero">
+  <div class="hero-media">
+    <video
+      class="hero-video"
+      autoplay muted loop playsinline
+      poster="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=1920&auto=format&fit=crop"
+      id="heroVideo">
+      <source src="https://cdn.coverr.co/videos/coverr-a-herd-of-horses-running-4571/1080p.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-vignette"></div>
+  </div>
 
-      <div class="btn-row" id="btnRow">
-        <button class="btn btn-no" id="noBtn">NO 😂</button>
-        <button class="btn btn-yes" id="yesBtn">YES 😌</button>
+  <div class="hero-content">
+    <p class="hero-eyebrow reveal-fade-up" data-delay="0">A CINEMATIC PORTRAIT</p>
+    <h1 class="hero-title" id="heroTitle" aria-label="THE SPIRIT OF THE HORSE"></h1>
+    <p class="hero-subtitle reveal-fade-up" data-delay="600">
+      Four thousand years of partnership. One unbroken instinct for freedom.
+    </p>
+  </div>
+
+  <button class="scroll-indicator" id="scrollIndicator" aria-label="Scroll to explore">
+    <span class="scroll-text">SCROLL</span>
+    <span class="scroll-line"><span class="scroll-dot"></span></span>
+  </button>
+</section>
+
+<!-- ============ 2. FREEDOM ============ -->
+<section class="freedom" id="freedom">
+  <div class="freedom-parallax" id="freedomParallax">
+    <img
+      src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=1920&auto=format&fit=crop"
+      alt="A herd of wild horses running free across open plains"
+      loading="lazy"
+      onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wild_Mustang_Horses.jpg/1920px-Wild_Mustang_Horses.jpg';">
+  </div>
+  <div class="freedom-scrim"></div>
+  <div class="freedom-content">
+    <span class="eyebrow reveal-fade-right">01 — THE OPEN PLAIN</span>
+    <h2 class="section-title reveal-fade-right" data-delay="150">Freedom is not<br>a metaphor.</h2>
+    <p class="freedom-text reveal-fade-right" data-delay="300">
+      Long before the saddle, before the bit, before a single rope was thrown —
+      the horse ran. Across steppe and prairie, through canyon and storm, it moved
+      not because it was told to, but because motion is the animal's native tongue.
+      To watch a herd run unbroken is to witness the oldest argument for liberty
+      the natural world has ever made.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 3. FAMOUS HORSE BREEDS ============ -->
+<section class="breeds" id="breeds">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">02 — THE BLOODLINES</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">Famous Breeds of the World</h2>
+    <p class="section-sub reveal-fade-up" data-delay="300">Each shaped by a different land, a different demand, a different dream.</p>
+  </div>
+
+  <div class="breed-grid">
+
+    <article class="breed-card reveal-zoom" data-delay="0">
+      <div class="breed-img-wrap">
+        <img src="https://images.unsplash.com/photo-1598974357801-cbca100e65d3?q=80&w=800&auto=format&fit=crop" alt="Arabian horse rearing" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Arabian_Horse_Herd_Rearing.jpg/800px-Arabian_Horse_Herd_Rearing.jpg';">
       </div>
+      <div class="breed-info">
+        <h3>Arabian</h3>
+        <span class="breed-origin">Arabian Peninsula</span>
+        <p>Prized for stamina and a dished profile; the foundation blood of nearly every modern light breed.</p>
+      </div>
+    </article>
 
-      <p class="hint" id="hint">psst... try clicking "YES" 👀</p>
-    </section>
-  </main>
+    <article class="breed-card reveal-zoom" data-delay="120">
+      <div class="breed-img-wrap">
+        <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=800&auto=format&fit=crop" alt="Andalusian horse" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Andalusian_horse.jpg/800px-Andalusian_horse.jpg';">
+      </div>
+      <div class="breed-info">
+        <h3>Andalusian</h3>
+        <span class="breed-origin">Iberian Peninsula</span>
+        <p>Baroque and powerful, bred for centuries as a warhorse, then a courtly performer.</p>
+      </div>
+    </article>
 
-  <script src="script.js"></script>
+    <article class="breed-card reveal-zoom" data-delay="240">
+      <div class="breed-img-wrap">
+        <img src="https://images.unsplash.com/photo-1598982966571-c7bdb7c0ceb0?q=80&w=800&auto=format&fit=crop" alt="Mustang horses in the wild" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Nokota_Horses.jpg/800px-Nokota_Horses.jpg';">
+      </div>
+      <div class="breed-info">
+        <h3>Mustang</h3>
+        <span class="breed-origin">North American Plains</span>
+        <p>Descended from Iberian stock gone feral — the living symbol of the American frontier.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="360">
+      <div class="breed-img-wrap">
+        <img src="https://images.unsplash.com/photo-1553284965-fe0c0e2e6e5c?q=80&w=800&auto=format&fit=crop" alt="Friesian horse" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Friesian_Horse.jpg/800px-Friesian_Horse.jpg';">
+      </div>
+      <div class="breed-info">
+        <h3>Friesian</h3>
+        <span class="breed-origin">Netherlands</span>
+        <p>Jet black, feather-legged, and famous for a trot that looks choreographed.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="480">
+      <div class="breed-img-wrap">
+        <img src="https://images.unsplash.com/photo-1553284966-19b8815c7817?q=80&w=800&auto=format&fit=crop" alt="Thoroughbred racehorse" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Thoroughbred.jpg/800px-Thoroughbred.jpg';">
+      </div>
+      <div class="breed-info">
+        <h3>Thoroughbred</h3>
+        <span class="breed-origin">England</span>
+        <p>Bred purely for speed since the 17th century — the engine of modern horse racing.</p>
+      </div>
+    </article>
+
+    <article class="breed-card reveal-zoom" data-delay="600">
+      <div class="breed-img-wrap">
+        <img src="https://images.unsplash.com/photo-1553284965-2fdd8dbf3f22?q=80&w=800&auto=format&fit=crop" alt="Icelandic horses" loading="lazy" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Icelandic_horses.jpg/800px-Icelandic_horses.jpg';">
+      </div>
+      <div class="breed-info">
+        <h3>Icelandic</h3>
+        <span class="breed-origin">Iceland</span>
+        <p>Isolated for a thousand years, it kept a rare fifth gait: the smooth, ground-covering tölt.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============ 4. TIMELINE ============ -->
+<section class="timeline-section" id="timeline">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">03 — FOUR MILLENNIA</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">A History Written in Hoofprints</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-item reveal-fade-left" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">3500 BCE</span>
+        <h3>First Domestication</h3>
+        <p>On the Eurasian steppe, the Botai culture becomes the first known people to ride and keep horses — a turning point in human mobility.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-right" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1600 BCE</span>
+        <h3>The War Chariot</h3>
+        <p>Horse-drawn chariots transform warfare across Egypt, the Near East and the Mediterranean, reshaping empires.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-left" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1200s CE</span>
+        <h3>The Mongol Horseback Empire</h3>
+        <p>Genghis Khan's mounted armies cover more ground faster than any force in history, built entirely on horsemanship.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-right" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1600s CE</span>
+        <h3>Horses Return to the Americas</h3>
+        <p>Spanish horses reintroduce the species to a continent it once roamed prehistorically — reshaping Indigenous cultures of the Plains.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-left" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">1900s CE</span>
+        <h3>From Engine to Icon</h3>
+        <p>As machines replace horsepower in industry, the horse is freed into sport, art and companionship — valued for spirit, not labor.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal-fade-right" data-delay="0">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <span class="timeline-year">Today</span>
+        <h3>A Living Symbol</h3>
+        <p>Wild herds still run from Nevada to the Kaimanawa Ranges — a last visible thread to a world before fences.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. GALLERY ============ -->
+<section class="gallery-section" id="gallery">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">04 — IN FRAME</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">Gallery</h2>
+    <p class="section-sub reveal-fade-up" data-delay="300">Click any frame to view.</p>
+  </div>
+
+  <div class="masonry" id="masonry">
+    <div class="masonry-item tall" data-full="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=1920&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=640&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Wild_Mustang_Horses.jpg/640px-Wild_Mustang_Horses.jpg';" alt="Wild mustangs running" loading="lazy">
+    </div>
+    <div class="masonry-item" data-full="https://images.unsplash.com/photo-1598974357801-cbca100e65d3?q=80&w=1280&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1598974357801-cbca100e65d3?q=80&w=640&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Arabian_Horse_Herd_Rearing.jpg/640px-Arabian_Horse_Herd_Rearing.jpg';" alt="Arabian horse rearing" loading="lazy">
+    </div>
+    <div class="masonry-item short" data-full="https://images.unsplash.com/photo-1553284965-fe0c0e2e6e5c?q=80&w=1280&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1553284965-fe0c0e2e6e5c?q=80&w=640&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Friesian_Horse.jpg/640px-Friesian_Horse.jpg';" alt="Friesian horse portrait" loading="lazy">
+    </div>
+    <div class="masonry-item" data-full="https://images.unsplash.com/photo-1553284966-19b8815c7817?q=80&w=1280&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1553284966-19b8815c7817?q=80&w=640&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Thoroughbred.jpg/640px-Thoroughbred.jpg';" alt="Thoroughbred galloping" loading="lazy">
+    </div>
+    <div class="masonry-item tall" data-full="https://images.unsplash.com/photo-1553284965-2fdd8dbf3f22?q=80&w=1280&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1553284965-2fdd8dbf3f22?q=80&w=640&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Icelandic_horses.jpg/640px-Icelandic_horses.jpg';" alt="Icelandic horses in snow" loading="lazy">
+    </div>
+    <div class="masonry-item short" data-full="https://images.unsplash.com/photo-1598982966571-c7bdb7c0ceb0?q=80&w=1280&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1598982966571-c7bdb7c0ceb0?q=80&w=640&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Nokota_Horses.jpg/640px-Nokota_Horses.jpg';" alt="Nokota horses on the plain" loading="lazy">
+    </div>
+    <div class="masonry-item" data-full="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=1280&auto=format&fit=crop&sat=-20">
+      <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=640&auto=format&fit=crop&sat=-20" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Andalusian_horse.jpg/640px-Andalusian_horse.jpg';" alt="Andalusian horse" loading="lazy">
+    </div>
+    <div class="masonry-item tall" data-full="https://images.unsplash.com/photo-1553284965-2fdd8dbf3f22?q=80&w=1280&auto=format&fit=crop&sat=-20">
+      <img src="https://images.unsplash.com/photo-1553284965-2fdd8dbf3f22?q=80&w=640&auto=format&fit=crop&sat=-20" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Wild_horses_at_sunset_%28cropped%29.jpg/640px-Wild_horses_at_sunset_%28cropped%29.jpg';" alt="Horses silhouetted at sunset" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <img src="" alt="" id="lightboxImg">
+</div>
+
+<!-- ============ 6. QUOTES ============ -->
+<section class="quotes-section" id="quotes">
+  <div class="quotes-bg"></div>
+  <div class="quote-wrap">
+    <span class="quote-mark">&ldquo;</span>
+    <p class="quote-text" id="quoteText"></p>
+    <p class="quote-author" id="quoteAuthor"></p>
+    <div class="quote-dots" id="quoteDots"></div>
+  </div>
+</section>
+
+<!-- ============ 7. FUN FACTS ============ -->
+<section class="facts-section" id="facts">
+  <div class="section-header">
+    <span class="eyebrow reveal-fade-up">05 — BY THE NUMBERS</span>
+    <h2 class="section-title reveal-fade-up" data-delay="150">Fun Facts</h2>
+  </div>
+
+  <div class="facts-grid">
+    <div class="fact-card reveal-fade-up" data-delay="0">
+      <span class="fact-number" data-target="332" data-suffix="&deg;">0</span>
+      <span class="fact-label">Field of vision — nearly a full circle</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="120">
+      <span class="fact-number" data-target="55" data-suffix=" mph">0</span>
+      <span class="fact-label">Top recorded sprint speed</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="240">
+      <span class="fact-number" data-target="205" data-suffix="">0</span>
+      <span class="fact-label">Distinct breeds recognized worldwide</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="360">
+      <span class="fact-number" data-target="30" data-suffix="+ yrs">0</span>
+      <span class="fact-label">Average domestic lifespan</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="480">
+      <span class="fact-number" data-target="17" data-suffix=" hrs">0</span>
+      <span class="fact-label">Time spent standing per day</span>
+    </div>
+    <div class="fact-card reveal-fade-up" data-delay="600">
+      <span class="fact-number" data-target="5500" data-suffix="+" data-plural="">0</span>
+      <span class="fact-label">Years since first domestication</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. ENDING ============ -->
+<section class="ending" id="ending">
+  <div class="ending-media">
+    <img
+      src="https://images.unsplash.com/photo-1553284965-2fdd8dbf3f22?q=80&w=1920&auto=format&fit=crop"
+      alt="Horses silhouetted against a golden sunset"
+      loading="lazy"
+      onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=1920&auto=format&fit=crop';">
+    <div class="ending-overlay"></div>
+  </div>
+  <div class="ending-content reveal-blur" id="endingContent">
+    <span class="eyebrow">EQUUS</span>
+    <h2>Wild at heart.<br>Free by nature.</h2>
+    <div class="ending-rule"></div>
+    <p>A film for anyone who has ever watched a horse run<br>and understood, for a moment, what freedom looks like.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo">EQUUS</span>
+    <span class="footer-line">A cinematic documentary tribute to the horse.</span>
+  </div>
+</footer>
+
+<!-- ============ SCROLL TO TOP ============ -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script src="script.js"></script>
 </body>
 </html>
